@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Preço do m² — Litoral de SC &amp; São Paulo · Dados DWV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0A0A0A; --black-soft: #171717;
+    --red: #DC2626; --red-dark: #991B1B; --red-soft: #FEE2E2; --red-pale: #FEF2F2;
+    --gold: #D97706; --gold-soft: #FEF3C7; --gold-bright: #F59E0B;
+    --white: #FFFFFF;
+    --gray-50: #FAFAFA; --gray-100: #F5F5F5; --gray-150: #EDEDED;
+    --gray-200: #E5E5E5; --gray-300: #D4D4D4; --gray-400: #A3A3A3;
+    --gray-500: #737373; --gray-600: #525252; --gray-700: #404040; --gray-800: #262626;
+    --green: #059669; --green-soft: #D1FAE5; --green-text: #065f46;
+    --blue: #2563EB; --blue-soft: #DBEAFE;
+    --container: 1100px; --gutter: 32px;
+    --radius: 14px; --radius-lg: 20px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--black); background: var(--gray-50);
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(10,10,10,0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .nav-inner {
+    max-width: var(--container); margin: 0 auto;
+    padding: 14px var(--gutter);
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 14px; color: #fff; letter-spacing: -0.02em; white-space: nowrap; }
+  .brand-mark {
+    width: 26px; height: 26px; background: var(--red); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 900; color: white; flex-shrink: 0;
+  }
+  .nav-links { display: flex; gap: 0; list-style: none; flex-wrap: nowrap; }
+  .nav-links a {
+    color: var(--gray-500); text-decoration: none; font-size: 12px; font-weight: 500;
+    padding: 6px 9px; border-radius: 999px; transition: color 150ms, background 150ms;
+    white-space: nowrap;
+  }
+  .nav-links a:hover { color: white; background: rgba(255,255,255,0.08); }
+
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
+
+  /* HERO */
+  .hero {
+    background: var(--black); color: var(--white);
+    padding: 72px 0 64px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; top: -200px; right: -160px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(220,38,38,0.35), transparent);
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+    font-weight: 600; color: var(--gray-400); margin-bottom: 22px;
+  }
+  .hero-eyebrow::before { content: ""; width: 28px; height: 1.5px; background: var(--red); }
+  .hero-eyebrow span { color: var(--red); }
+  .hero h1 {
+    font-size: clamp(36px, 5.5vw, 62px);
+    line-height: 1.02; letter-spacing: -0.045em; font-weight: 900; max-width: 860px;
+  }
+  .hero h1 .accent { color: var(--red); }
+  .hero-sub { margin-top: 18px; font-size: 16px; color: var(--gray-400); max-width: 640px; line-height: 1.6; }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; margin-top: 48px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 36px;
+  }
+  .hero-stat { padding-right: 32px; }
+  .hero-stat + .hero-stat { padding-left: 32px; border-left: 1px solid rgba(255,255,255,0.07); }
+  .hero-stat .hs-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gray-500); margin-bottom: 8px; }
+  .hero-stat .hs-val { font-size: clamp(20px, 2.5vw, 28px); font-weight: 800; letter-spacing: -0.03em; color: white; line-height: 1; }
+  .hero-stat .hs-val.gold { color: var(--gold-bright); }
+  .hero-stat .hs-sub { font-size: 11.5px; color: var(--gray-600); margin-top: 6px; }
+
+  /* SECTIONS */
+  section { padding: 64px 0; border-bottom: 1px solid var(--gray-200); background: var(--white); }
+  section.alt { background: var(--gray-50); }
+  section:last-of-type { border-bottom: 0; }
+
+  .section-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--red);
+    padding: 4px 11px; background: var(--red-pale); border-radius: 999px; margin-bottom: 14px;
+  }
+  .section-eyebrow::before { content: ""; width: 6px; height: 6px; background: var(--red); border-radius: 50%; }
+  .section-title { font-size: clamp(24px, 3.2vw, 36px); line-height: 1.08; letter-spacing: -0.03em; font-weight: 800; color: var(--black); }
+  .section-sub { font-size: 14.5px; color: var(--gray-500); max-width: 640px; line-height: 1.7; margin-top: 10px; margin-bottom: 36px; }
+
+  /* PROSE */
+  .prose {
+    font-size: 15px; color: var(--gray-700); line-height: 1.8; max-width: 780px;
+    margin-bottom: 28px;
+  }
+  .prose strong { color: var(--black); }
+  .prose + .prose { margin-top: -12px; }
+
+  /* CHART CARDS */
+  .chart-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 28px 24px; margin-top: 16px;
+  }
+  .chart-card-title { font-size: 14px; font-weight: 700; color: var(--black); margin-bottom: 4px; }
+  .chart-card-sub { font-size: 12.5px; color: var(--gray-500); margin-bottom: 22px; line-height: 1.5; }
+  .legend { display: flex; gap: 18px; margin-bottom: 20px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--gray-600); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-dot.red { background: var(--red); }
+  .legend-dot.gold { background: var(--gold-bright); }
+
+  .hbar-list { display: flex; flex-direction: column; gap: 14px; }
+  .hbar-row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; align-items: center; }
+  .hbar-label { font-size: 12.5px; font-weight: 600; color: var(--black); line-height: 1.3; text-align: right; }
+  .hbar-col { display: flex; flex-direction: column; gap: 4px; }
+  .hbar-pair { display: flex; align-items: center; gap: 8px; }
+  .hbar-track { flex: 1; height: 8px; background: var(--gray-100); border-radius: 999px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 999px; transition: width 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .hbar-fill.red { background: var(--red); }
+  .hbar-fill.gold { background: var(--gold-bright); }
+  .hbar-val { font-size: 11.5px; font-weight: 600; white-space: nowrap; min-width: 82px; }
+  .hbar-val.red { color: var(--red-dark); }
+  .hbar-val.gold { color: var(--gold); }
+
+  /* TABLES */
+  .rank-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 0; }
+  .rank-table thead th {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--gray-500);
+    padding: 0 14px 12px 14px; text-align: left;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  .rank-table thead th:not(:first-child) { text-align: right; }
+  .rank-table tbody tr { transition: background 150ms; }
+  .rank-table tbody tr:hover { background: var(--gray-50); }
+  .rank-table tbody td {
+    padding: 14px; font-size: 13.5px; color: var(--black);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .rank-table tbody td:not(:first-child) { text-align: right; }
+  .rank-table td .bname { font-weight: 700; display: block; }
+  .rank-table td .bsub { font-size: 11px; color: var(--gray-400); font-weight: 400; }
+  .rank { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 5px; font-size: 10px; font-weight: 700; margin-right: 8px; vertical-align: middle; background: var(--gray-100); color: var(--gray-500); }
+  .rank.top1 { background: var(--red); color: white; }
+  .rank.top2 { background: var(--gray-800); color: white; }
+  .rank.top3 { background: var(--gray-600); color: white; }
+  .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .badge.high { background: var(--green-soft); color: var(--green-text); }
+  .badge.mid { background: var(--gold-soft); color: #78350f; }
+  .badge.low { background: var(--red-soft); color: var(--red-dark); }
+
+  .growth-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 999px;
+    background: var(--green-soft); color: var(--green-text);
+  }
+  .growth-pill.big { background: var(--red-soft); color: var(--red-dark); }
+
+  /* SOBRE A DWV */
+  .about-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
+  .about-stat {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 20px 18px;
+  }
+  .about-stat .as-val { font-size: 24px; font-weight: 900; letter-spacing: -0.03em; color: var(--red); line-height: 1; }
+  .about-stat .as-label { font-size: 12px; color: var(--gray-500); margin-top: 6px; line-height: 1.4; }
+
+  /* GLOSSÁRIO */
+  .glossary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; }
+  .glossary-item {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 18px;
+  }
+  .glossary-item .g-term { font-size: 13px; font-weight: 800; color: var(--black); margin-bottom: 6px; }
+  .glossary-item .g-def { font-size: 12.5px; color: var(--gray-600); line-height: 1.6; }
+
+  /* NOTE */
+  .data-note { font-size: 11px; color: var(--gray-400); margin-top: 20px; padding: 10px 14px; background: var(--gray-100); border-radius: 8px; border-left: 3px solid var(--gray-300); line-height: 1.5; }
+
+  /* CALLOUT */
+  .callout {
+    background: var(--gold-soft); border: 1px solid #f0d9a0; border-radius: var(--radius);
+    padding: 18px 20px; margin-top: 16px; font-size: 13px; color: #78350f; line-height: 1.7;
+  }
+  .callout strong { color: #5c2d0c; }
+
+  /* FOOTER */
+  .footer { background: var(--black); padding: 36px 0; }
+  .footer-inner {
+    max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter);
+    display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  .footer-brand { display: flex; align-items: center; gap: 10px; }
+  .footer-brand span { font-weight: 700; color: white; font-size: 13px; }
+  .footer-info { font-size: 11.5px; color: var(--gray-600); }
+  .footer-info strong { color: var(--gray-400); }
+
+  @media (max-width: 960px) {
+    .nav-links { display: none; }
+  }
+  @media (max-width: 860px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .hero-stat + .hero-stat { border-left: none; padding-left: 0; }
+    .hbar-row { grid-template-columns: 100px 1fr; }
+    .two-col { grid-template-columns: 1fr !important; }
+    .four-col { grid-template-columns: repeat(2, 1fr) !important; }
+    .about-grid { grid-template-columns: repeat(2, 1fr); }
+    .glossary { grid-template-columns: 1fr 1fr; }
+    .table-scroll { overflow-x: auto; }
+  }
+  @media (max-width: 600px) {
+    :root { --gutter: 18px; }
+    .hero-stats { grid-template-columns: 1fr 1fr; }
+    .hbar-row { grid-template-columns: 88px 1fr; }
+    .hbar-label { font-size: 11px; }
+    .four-col { grid-template-columns: 1fr 1fr !important; }
+    .about-grid { grid-template-columns: 1fr 1fr; }
+    .glossary { grid-template-columns: 1fr; }
+  }
+  .table-scroll { width: 100%; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-mark">D</div>
+      DWV Inteligência de Mercado
+    </div>
+    <ul class="nav-links">
+      <li><a href="#sobre">Dados</a></li>
+      <li><a href="#resumo">Resumo</a></li>
+      <li><a href="#precos">Cidades</a></li>
+      <li><a href="#bairros">Bairros</a></li>
+      <li><a href="#mercado">Mercado</a></li>
+      <li><a href="#lancamentos">Lançamentos</a></li>
+      <li><a href="#saopaulo">São Paulo</a></li>
+      <li><a href="#notas">Notas</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">
+      Inteligência de Mercado DWV &nbsp;·&nbsp; <span>Imóveis Novos &amp; Lançamentos</span>
+    </div>
+    <h1>Quanto custa o metro quadrado no <span class="accent">litoral catarinense</span></h1>
+    <p class="hero-sub">O preço do m² efetivamente pago em imóveis novos, cidade por cidade e bairro por bairro — de 2023 ao primeiro semestre de 2026. Inclui o recorte de alto padrão de São Paulo monitorado pela plataforma DWV.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hs-label">m² Mais Caro (Cidade)</div>
+        <div class="hs-val gold">R$ 25.769</div>
+        <div class="hs-sub">Balneário Camboriú · m² vendido · 1º sem. 2026</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-label">Vendido Desde 2023</div>
+        <div class="hs-val gold">R$ 36,6 bilhões</div>
+        <div class="hs-sub">10 cidades do litoral de SC</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-label">Imóveis à Venda Hoje</div>
+        <div class="hs-val gold">R$ 45,3 bilhões</div>
+        <div class="hs-sub">litoral de SC + recorte de São Paulo</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-label">Cidades Analisadas</div>
+        <div class="hs-val">11</div>
+        <div class="hs-sub">dados extraídos em 09/09/2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE OS DADOS -->
+<section id="sobre">
+  <div class="container">
+    <div class="section-eyebrow">Antes de Começar</div>
+    <h2 class="section-title">De onde vêm esses dados?</h2>
+
+    <p class="prose" style="margin-top:24px;">A <strong>DWV</strong> é uma plataforma brasileira, criada em 2019, que conecta <strong>construtoras e incorporadoras</strong> (quem constrói os prédios) aos <strong>corretores de imóveis</strong> (quem vende as unidades). Funciona assim: a construtora cadastra seus empreendimentos na plataforma para que milhares de corretores possam vendê-los — e mantém atualizado, unidade por unidade, <strong>o que está à venda, por quanto, e o que já foi vendido</strong>.</p>
+    <p class="prose">É esse registro, feito pelas próprias construtoras, que gera os números deste material. Eles mostram o movimento real de <strong>imóveis novos e lançamentos</strong> — apartamentos vendidos ainda na planta, em obras ou recém-entregues. Imóveis usados não entram na conta. Todos os números de cidades e bairros vêm de uma única extração da base, feita em <strong>09/09/2026</strong>.</p>
+
+    <div class="about-grid">
+      <div class="about-stat">
+        <div class="as-val">750+</div>
+        <div class="as-label">construtoras e incorporadoras usam a plataforma</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-val">70 mil+</div>
+        <div class="as-label">corretores de imóveis cadastrados</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-val">280 mil+</div>
+        <div class="as-label">imóveis registrados na plataforma</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-val">2019</div>
+        <div class="as-label">ano de fundação da empresa</div>
+      </div>
+    </div>
+
+    <div class="chart-card" style="margin-top:24px;">
+      <div class="chart-card-title">Quatro termos que aparecem neste material</div>
+      <div class="glossary">
+        <div class="glossary-item">
+          <div class="g-term">m² vendido</div>
+          <div class="g-def">O preço médio por metro quadrado dos imóveis que <strong>de fato foram vendidos</strong> no período — não o preço pedido, o preço pago. É o principal indicador deste material.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="g-term">Preço de oferta</div>
+          <div class="g-def">O valor pedido pelos imóveis que estão <strong>à venda</strong>. Usado no recorte de São Paulo, onde há poucas vendas registradas na base.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="g-term">Imóveis no mercado</div>
+          <div class="g-def">Total de imóveis novos em circulação num período: os à venda + os vendidos. Mede o tamanho e o ritmo de lançamento de cada cidade.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="g-term">Valor vendido</div>
+          <div class="g-def">A soma dos preços de todos os imóveis vendidos no período — quanto dinheiro o mercado da cidade movimentou.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESUMO -->
+<section class="alt" id="resumo">
+  <div class="container">
+    <div class="section-eyebrow">Resumo</div>
+    <h2 class="section-title">O que os dados mostram, em poucas palavras</h2>
+
+    <p class="prose" style="margin-top:24px;"><strong>Balneário Camboriú tem o metro quadrado mais caro do litoral catarinense</strong>: R$ 25.769 por m² vendido no 1º semestre de 2026 — patamar bem acima de todas as vizinhas. Descendo ao nível dos bairros, o pódio se espalha por três cidades: o <strong>Centro de Balneário Camboriú</strong> (R$ 26.775/m²), a <strong>Praia Brava, em Itajaí</strong> (R$ 25.298/m²) e o <strong>Centro de Itapema</strong> (R$ 24.921/m²).</p>
+    <p class="prose">Nos preços, quem mais subiu desde 2023 foram <strong>Navegantes (+58%)</strong>, <strong>Balneário Piçarras (+56%)</strong> e <strong>Itajaí (+51%)</strong> — e, entre os bairros com volume relevante, a <strong>Fazenda, em Itajaí, valorizou +76%</strong>. No volume, <strong>Porto Belo</strong> segue como o maior mercado da região, com quase 12 mil imóveis novos em circulação no semestre. Em <strong>São Paulo</strong>, onde a base da DWV cobre um recorte específico de alto padrão, os bairros mais caros pedem na faixa de <strong>R$ 60 mil/m²</strong>.</p>
+
+    <div style="background:var(--black); border-radius:var(--radius-lg); padding:28px 24px; position:relative; overflow:hidden; margin-top:8px;">
+      <div style="position:absolute; top:-120px; right:-120px; width:320px; height:320px; background:radial-gradient(circle, rgba(220,38,38,0.13) 0%, transparent 65%); pointer-events:none;"></div>
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:var(--gray-600); margin-bottom:18px;">Os destaques de preço · 2023 → 1º semestre 2026</div>
+      <div class="four-col" style="display:grid; grid-template-columns:repeat(4,1fr); gap:24px;">
+        <div>
+          <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-600); margin-bottom:8px;">m² mais caro · cidade</div>
+          <div style="font-size:26px; font-weight:900; color:var(--gold-bright); letter-spacing:-0.04em; line-height:1;">Bal. Camboriú</div>
+          <div style="font-size:12px; color:var(--gray-500); margin-top:6px;">R$ 25.769/m² vendido</div>
+        </div>
+        <div>
+          <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-600); margin-bottom:8px;">m² mais caro · bairro</div>
+          <div style="font-size:26px; font-weight:900; color:var(--gold-bright); letter-spacing:-0.04em; line-height:1;">Centro · BC</div>
+          <div style="font-size:12px; color:var(--gray-500); margin-top:6px;">R$ 26.775/m² · 227 vendas no semestre</div>
+        </div>
+        <div>
+          <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-600); margin-bottom:8px;">Maior alta · cidade</div>
+          <div style="font-size:26px; font-weight:900; color:var(--white); letter-spacing:-0.04em; line-height:1;">Navegantes</div>
+          <div style="font-size:12px; color:var(--gray-500); margin-top:6px;">+58% no m² vendido desde 2023</div>
+        </div>
+        <div>
+          <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-600); margin-bottom:8px;">Maior alta · bairro</div>
+          <div style="font-size:26px; font-weight:900; color:var(--white); letter-spacing:-0.04em; line-height:1;">Fazenda · Itajaí</div>
+          <div style="font-size:12px; color:var(--gray-500); margin-top:6px;">+76% no m² vendido desde 2023</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREÇOS POR CIDADE -->
+<section id="precos">
+  <div class="container">
+    <div class="section-eyebrow">Cidade por Cidade</div>
+    <h2 class="section-title">O ranking do m² vendido</h2>
+    <p class="section-sub">Preço médio por metro quadrado dos imóveis novos efetivamente vendidos no 1º semestre de 2026, com a variação desde 2023 ao lado de cada cidade.</p>
+
+    <div class="chart-card" style="margin-top:0;">
+      <div class="chart-card-title">m² vendido por cidade — 1º semestre de 2026</div>
+      <div class="chart-card-sub">Barras na mesma escala. O percentual verde é quanto o preço subiu de 2023 para cá.</div>
+      <div class="hbar-list">
+        <div class="hbar-row">
+          <div class="hbar-label">Bal. Camboriú<br><span style="font-weight:800; color:var(--green); font-size:11px;">+28% desde 2023</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:100%"></div></div><span class="hbar-val gold" style="font-weight:800;">R$ 25.769 🏆</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Gov. Celso Ramos *<br><span style="font-weight:800; color:var(--green); font-size:11px;">+9%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:76%"></div></div><span class="hbar-val gold">R$ 19.579</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Itajaí<br><span style="font-weight:800; color:var(--green); font-size:11px;">+51%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:66.4%"></div></div><span class="hbar-val gold">R$ 17.111</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">São Paulo *<br><span style="font-weight:400; color:var(--gray-400); font-size:11px;">recorte alto padrão</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:60%; opacity:0.55;"></div></div><span class="hbar-val gold" style="opacity:0.7;">R$ 15.459</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Porto Belo<br><span style="font-weight:800; color:var(--green); font-size:11px;">+12%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:59.5%"></div></div><span class="hbar-val gold">R$ 15.335</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Itapema<br><span style="font-weight:800; color:var(--green); font-size:11px;">+19%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:56.6%"></div></div><span class="hbar-val gold">R$ 14.582</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Penha<br><span style="font-weight:800; color:var(--green); font-size:11px;">+13%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:53.2%"></div></div><span class="hbar-val gold">R$ 13.721</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Bal. Piçarras<br><span style="font-weight:800; color:var(--green); font-size:11px;">+56%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:48.5%"></div></div><span class="hbar-val gold">R$ 12.501</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Barra Velha<br><span style="font-weight:800; color:var(--green); font-size:11px;">+10%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:47.4%"></div></div><span class="hbar-val gold">R$ 12.204</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Navegantes<br><span style="font-weight:800; color:var(--green); font-size:11px;">+58%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:44.8%"></div></div><span class="hbar-val gold">R$ 11.538</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">Tijucas<br><span style="font-weight:800; color:var(--green); font-size:11px;">+49%</span></div>
+          <div class="hbar-col"><div class="hbar-pair"><div class="hbar-track"><div class="hbar-fill gold" style="width:26.5%"></div></div><span class="hbar-val gold">R$ 6.835</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="prose" style="margin-top:24px;">Duas leituras saltam da tabela. Primeiro, o degrau de <strong>Balneário Camboriú</strong>: R$ 8,6 mil acima da segunda colocada entre as cidades de cobertura consolidada. Segundo, o padrão das altas: as maiores valorizações — <strong>Navegantes, Piçarras, Itajaí e Tijucas, todas entre +49% e +58%</strong> — aconteceram justamente nas cidades de preço médio mais baixo, que partiram de uma base menor.</p>
+
+    <div class="data-note">* <strong>Gov. Celso Ramos:</strong> média baseada em 38 vendas no semestre e cobertura parcial da base — ler como indicativo. · * <strong>São Paulo:</strong> a base da DWV na capital cobre um recorte de alto padrão (48 vendas registradas no semestre) e não representa o mercado total da cidade — detalhes na seção São Paulo.</div>
+  </div>
+</section>
+
+<!-- BAIRROS -->
+<section class="alt" id="bairros">
+  <div class="container">
+    <div class="section-eyebrow">Bairro por Bairro</div>
+    <h2 class="section-title">Os bairros mais caros do litoral catarinense</h2>
+    <p class="section-sub">O m² vendido de cada bairro no 1º semestre de 2026, considerando apenas bairros com pelo menos 10 vendas no período — o número de vendas aparece ao lado, para dar o peso de cada média.</p>
+
+    <div class="chart-card table-scroll" style="margin-top:0; padding:28px 24px;">
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>Bairro</th>
+            <th>m² Vendido<br>1º sem. 2026</th>
+            <th>Vendas no<br>Semestre</th>
+            <th>m² Vendido<br>em 2023</th>
+            <th>Variação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--red-pale);">
+            <td><span class="rank top1">1</span><span class="bname" style="color:var(--red);">Centro</span><span class="bsub">Balneário Camboriú</span></td>
+            <td style="font-weight:800; color:var(--red);">R$ 26.775</td>
+            <td>227</td>
+            <td>R$ 20.623</td>
+            <td><span class="growth-pill">+30%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank top2">2</span><span class="bname">Praia Brava</span><span class="bsub">Itajaí</span></td>
+            <td style="font-weight:700;">R$ 25.298</td>
+            <td>208</td>
+            <td>R$ 17.998</td>
+            <td><span class="growth-pill">+41%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank top3">3</span><span class="bname">Centro</span><span class="bsub">Itapema</span></td>
+            <td style="font-weight:700;">R$ 24.921</td>
+            <td>52</td>
+            <td>R$ 18.747</td>
+            <td><span class="growth-pill">+33%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank">4</span><span class="bname">Pioneiros</span><span class="bsub">Balneário Camboriú</span></td>
+            <td>R$ 22.790</td>
+            <td>38</td>
+            <td>R$ 20.951</td>
+            <td><span class="growth-pill">+9%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank">5</span><span class="bname">Fazenda</span><span class="bsub">Itajaí</span></td>
+            <td>R$ 19.639</td>
+            <td>270</td>
+            <td>R$ 11.167</td>
+            <td><span class="growth-pill big">+76%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank">6</span><span class="bname">Canto da Praia</span><span class="bsub">Itapema</span></td>
+            <td>R$ 19.464</td>
+            <td>14</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="rank">7</span><span class="bname">Meia Praia</span><span class="bsub">Itapema</span></td>
+            <td>R$ 19.440</td>
+            <td>269</td>
+            <td>R$ 15.293</td>
+            <td><span class="growth-pill">+27%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank">8</span><span class="bname">Palmas</span><span class="bsub">Gov. Celso Ramos · cobertura parcial</span></td>
+            <td>R$ 17.344</td>
+            <td>20</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="rank">9</span><span class="bname">Tabuleiro dos Oliveiras</span><span class="bsub">Itapema</span></td>
+            <td>R$ 15.776</td>
+            <td>97</td>
+            <td>R$ 10.555</td>
+            <td><span class="growth-pill">+49%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank">10</span><span class="bname">Perequê</span><span class="bsub">Porto Belo</span></td>
+            <td>R$ 15.751</td>
+            <td>886</td>
+            <td>R$ 13.324</td>
+            <td><span class="growth-pill">+18%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank">11</span><span class="bname">Balneário Perequê</span><span class="bsub">Porto Belo</span></td>
+            <td>R$ 15.604</td>
+            <td>199</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="rank">12</span><span class="bname">Centro</span><span class="bsub">Penha · cobertura parcial</span></td>
+            <td>R$ 15.596</td>
+            <td>18</td>
+            <td>R$ 9.914</td>
+            <td><span class="growth-pill big">+57%</span></td>
+          </tr>
+          <tr>
+            <td><span class="rank">13</span><span class="bname">Tabuleiro</span><span class="bsub">Barra Velha · cobertura parcial</span></td>
+            <td>R$ 15.154</td>
+            <td>44</td>
+            <td>R$ 13.214</td>
+            <td><span class="growth-pill">+15%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose" style="margin-top:24px;">Traduzindo a tabela: o pódio dos bairros se divide entre três cidades — e a diferença entre eles é pequena (R$ 24,9 mil a R$ 26,8 mil). Mais abaixo, dois casos chamam atenção pelo movimento: a <strong>Fazenda, em Itajaí</strong>, que saltou de R$ 11,2 mil para R$ 19,6 mil (+76%) vendendo em volume alto (270 unidades no semestre), e o <strong>Perequê, em Porto Belo</strong>, o bairro que mais vende do litoral (886 unidades no semestre), com preço ainda na faixa dos R$ 15,8 mil.</p>
+
+    <div class="callout">
+      <strong>⚠ Picos com poucas vendas — cite sempre com o número junto:</strong> alguns bairros registram médias muito acima das da tabela, mas com pouquíssimas vendas no semestre: <strong>Barra Sul (Bal. Camboriú): R$ 66.997/m² com 5 vendas</strong> · Estreito (Itapema): R$ 37.800/m² com 3 vendas · Barra Norte (Bal. Camboriú): R$ 30.774/m² com 4 vendas. São vendas reais de altíssimo padrão, mas a média de amostras tão pequenas oscila muito — por isso ficam fora do ranking principal.
+    </div>
+
+    <div class="data-note">ⓘ Média do preço por m² das unidades vendidas no período, por bairro, conforme registro das construtoras na plataforma DWV. Bairros com menos de 10 vendas no semestre não entram no ranking. Como o nome do bairro é digitado pela construtora, grafias duplicadas do mesmo bairro foram somadas (ex.: "Fazenda"/"Bairro Fazenda" em Itajaí, "Praia Brava"/"praia brava de itajaí", as duas grafias de "Balneário Perequê" em Porto Belo). Onde há dúvida se os cadastros são o mesmo lugar, ou onde a amostra de 2023 é pequena demais, a variação aparece como "—".</div>
+  </div>
+</section>
+
+<!-- MERCADO -->
+<section id="mercado">
+  <div class="container">
+    <div class="section-eyebrow">Tamanho do Mercado</div>
+    <h2 class="section-title">O volume de cada cidade</h2>
+    <p class="section-sub">Além do preço, o tamanho: quantos imóveis novos circulam em cada mercado e quanto dinheiro cada cidade movimentou desde 2023.</p>
+
+    <div class="chart-card table-scroll" style="margin-top:0; padding:28px 24px;">
+      <div class="chart-card-title">As 5 cidades de cobertura consolidada</div>
+      <div class="chart-card-sub">Nessas cidades, a grande maioria das construtoras ativas usa a DWV — os números retratam bem o mercado real.</div>
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>Cidade</th>
+            <th>Imóveis no Mercado<br>1º sem. 2026</th>
+            <th>Quanto Cresceu<br>desde 2023</th>
+            <th>Valor Vendido<br>2023 – 1º sem. 26</th>
+            <th>m² Vendido<br>1º sem. 2026</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--red-pale);">
+            <td><span class="rank top1">1</span><span class="bname" style="color:var(--red);">Porto Belo</span></td>
+            <td style="font-weight:800; color:var(--red);">11.913</td>
+            <td><span class="growth-pill big">6,2×</span></td>
+            <td style="font-weight:700;">R$ 9,1 bilhões</td>
+            <td>R$ 15.335</td>
+          </tr>
+          <tr>
+            <td><span class="rank top2">2</span><span class="bname">Itapema</span></td>
+            <td style="font-weight:700;">6.754</td>
+            <td><span class="growth-pill">1,9×</span></td>
+            <td style="font-weight:700;">R$ 12,0 bilhões</td>
+            <td>R$ 14.582</td>
+          </tr>
+          <tr>
+            <td><span class="rank top3">3</span><span class="bname">Itajaí</span></td>
+            <td style="font-weight:700;">3.829</td>
+            <td><span class="growth-pill">2,7×</span></td>
+            <td style="font-weight:700;">R$ 5,4 bilhões</td>
+            <td>R$ 17.111</td>
+          </tr>
+          <tr>
+            <td><span class="rank">4</span><span class="bname">Balneário Camboriú</span></td>
+            <td>1.583</td>
+            <td><span class="growth-pill">2,4×</span></td>
+            <td>R$ 5,6 bilhões</td>
+            <td style="color:var(--gold); font-weight:700;">R$ 25.769 🏆</td>
+          </tr>
+          <tr>
+            <td><span class="rank">5</span><span class="bname">Navegantes</span></td>
+            <td>1.005</td>
+            <td><span class="growth-pill">2,7×</span></td>
+            <td>R$ 1,1 bilhão</td>
+            <td>R$ 11.538</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose" style="margin-top:24px;">O contraste entre preço e volume é o retrato da região: <strong>Balneário Camboriú</strong> tem o m² mais caro operando com o segundo menor volume — poucos imóveis, valores altos. <strong>Porto Belo</strong> é o oposto: o mercado multiplicou por 6 desde 2023 e hoje tem quase o dobro de imóveis em circulação que Itapema, com preço médio na metade do de Balneário Camboriú. <strong>Itapema</strong>, com um mercado grande e estabelecido, segue sendo a cidade que mais vendeu em valor no acumulado: R$ 12 bilhões.</p>
+
+    <div class="chart-card table-scroll" style="padding:28px 24px;">
+      <div class="chart-card-title">As 5 cidades menores — cobertura parcial</div>
+      <div class="chart-card-sub">Aqui menos construtoras usam a DWV, então os números captam parte do mercado. Servem para indicar tendência, não tamanho exato.</div>
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>Cidade</th>
+            <th>Imóveis no Mercado<br>2023</th>
+            <th>Imóveis no Mercado<br>1º sem. 2026</th>
+            <th>Quanto Cresceu</th>
+            <th>Valor Vendido<br>2023 – 1º sem. 26</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rank top1">1</span><span class="bname">Penha</span></td>
+            <td>93</td>
+            <td style="font-weight:700;">589</td>
+            <td><span class="growth-pill big">6,3×</span></td>
+            <td>R$ 631 milhões</td>
+          </tr>
+          <tr>
+            <td><span class="rank top2">2</span><span class="bname">Barra Velha</span></td>
+            <td>169</td>
+            <td style="font-weight:700;">902</td>
+            <td><span class="growth-pill big">5,3×</span></td>
+            <td>R$ 861 milhões</td>
+          </tr>
+          <tr>
+            <td><span class="rank top3">3</span><span class="bname">Balneário Piçarras</span></td>
+            <td>273</td>
+            <td style="font-weight:700;">1.125</td>
+            <td><span class="growth-pill big">4,1×</span></td>
+            <td style="font-weight:700;">R$ 1,4 bilhão</td>
+          </tr>
+          <tr>
+            <td><span class="rank">4</span><span class="bname">Tijucas</span></td>
+            <td>105</td>
+            <td>231</td>
+            <td><span class="growth-pill">2,2×</span></td>
+            <td>R$ 170 milhões</td>
+          </tr>
+          <tr>
+            <td><span class="rank">5</span><span class="bname">Gov. Celso Ramos</span></td>
+            <td>109</td>
+            <td>153</td>
+            <td><span class="growth-pill">1,4×</span></td>
+            <td>R$ 394 milhões</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose" style="margin-top:24px;">Mesmo enxergando só parte desses mercados, a tendência é visível: <strong>Penha (6,3×), Barra Velha (5,3×) e Balneário Piçarras (4,1×)</strong> multiplicaram a quantidade de imóveis novos em circulação desde 2023 — e Piçarras já acumula R$ 1,4 bilhão em vendas no período, com o m² subindo 56%.</p>
+
+    <div class="data-note">ⓘ "Imóveis no mercado" = imóveis à venda + imóveis vendidos no período · "Valor vendido" = soma dos preços de todos os imóveis vendidos entre 01/01/2023 e 30/06/2026 · Extração única da base em 09/09/2026.</div>
+  </div>
+</section>
+
+<!-- EMPREENDIMENTOS LANÇADOS — levantamento TEA-3467, snapshot do banco em 06/08/2026 -->
+<section class="alt" id="lancamentos">
+  <div class="container">
+    <div class="section-eyebrow">Lançamentos</div>
+    <h2 class="section-title">Quantos empreendimentos novos cada cidade lançou</h2>
+    <p class="section-sub">Aqui a contagem é de <strong>empreendimentos</strong> — o prédio ou condomínio inteiro, não cada apartamento. É o número de projetos novos, com unidades à venda, que as construtoras publicaram na plataforma DWV em cada ano. A última coluna mostra quantos apartamentos esses projetos somam.</p>
+
+    <div class="chart-card table-scroll" style="margin-top:0; padding:28px 24px;">
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>Cidade</th>
+            <th>2023</th>
+            <th>2024</th>
+            <th>2025</th>
+            <th>1º sem. 26</th>
+            <th>Total de<br>Empreendimentos</th>
+            <th>Apartamentos<br>Nesses Projetos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rank top1">1</span><span class="bname">Itapema</span></td>
+            <td>124</td><td>95</td><td>65</td><td>31</td>
+            <td style="font-weight:800;">315</td><td>23.932</td>
+          </tr>
+          <tr style="background:var(--red-pale);">
+            <td><span class="rank top2">2</span><span class="bname" style="color:var(--red);">Porto Belo</span></td>
+            <td>87</td><td>93</td><td>80</td><td>38</td>
+            <td style="font-weight:800;">298</td><td style="font-weight:800; color:var(--red);">35.055</td>
+          </tr>
+          <tr>
+            <td><span class="rank top3">3</span><span class="bname">Itajaí</span></td>
+            <td>50</td><td>35</td><td>55</td><td>22</td>
+            <td style="font-weight:700;">162</td><td>13.325</td>
+          </tr>
+          <tr>
+            <td><span class="rank">4</span><span class="bname">Navegantes</span></td>
+            <td>38</td><td>27</td><td>45</td><td>20</td>
+            <td style="font-weight:700;">130</td><td>4.837</td>
+          </tr>
+          <tr>
+            <td><span class="rank">5</span><span class="bname">Balneário Camboriú</span></td>
+            <td>37</td><td>43</td><td>28</td><td>20</td>
+            <td style="font-weight:700;">128</td><td>3.549</td>
+          </tr>
+          <tr>
+            <td><span class="rank">6</span><span class="bname">Balneário Piçarras</span></td>
+            <td>23</td><td>19</td><td>25</td><td>10</td>
+            <td style="font-weight:700;">77</td><td>3.681</td>
+          </tr>
+          <tr>
+            <td><span class="rank">7</span><span class="bname">Barra Velha</span></td>
+            <td>12</td><td>14</td><td>24</td><td>8</td>
+            <td style="font-weight:700;">58</td><td>3.190</td>
+          </tr>
+          <tr>
+            <td><span class="rank">8</span><span class="bname">Tijucas</span></td>
+            <td>10</td><td>10</td><td>24</td><td>7</td>
+            <td style="font-weight:700;">51</td><td>789</td>
+          </tr>
+          <tr>
+            <td><span class="rank">9</span><span class="bname">Penha</span></td>
+            <td>7</td><td>11</td><td>14</td><td>4</td>
+            <td style="font-weight:700;">36</td><td>1.670</td>
+          </tr>
+          <tr>
+            <td><span class="rank">10</span><span class="bname">Gov. Celso Ramos</span></td>
+            <td>0</td><td>7</td><td>3</td><td>3</td>
+            <td style="font-weight:700;">13</td><td>391</td>
+          </tr>
+          <tr style="background:var(--gray-50); border-top:2px solid var(--gray-200);">
+            <td><span class="bname">Total — 10 cidades</span></td>
+            <td style="font-weight:700;">388</td><td style="font-weight:700;">354</td><td style="font-weight:700;">363</td><td style="font-weight:700;">163</td>
+            <td style="font-weight:800;">1.268</td><td style="font-weight:700;">90.419</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose" style="margin-top:24px;">Traduzindo a tabela: no conjunto das 10 cidades, o ritmo de lançamentos se mantém em patamar alto — 388 projetos em 2023, 354 em 2024 e 363 em 2025 (a coluna de 2026 cobre só o primeiro semestre). O que os dados mostram é o mapa se redistribuindo: <strong>Itapema</strong> concentrou o maior volume do período (315 projetos), <strong>Porto Belo</strong> mantém ritmo constante e lidera com folga em apartamentos — seus 298 empreendimentos somam mais de 35 mil unidades, porque os projetos de lá são bem maiores —, <strong>Itajaí</strong> fez em 2025 o seu ano recorde (55 projetos), e entre as cidades menores <strong>Tijucas, Barra Velha e Penha</strong> publicaram em 2025 o dobro (ou mais) de projetos do que publicavam em 2023.</p>
+
+    <div class="data-note">ⓘ Contagem de empreendimentos com unidades à venda publicados na plataforma DWV — cadastros de teste, rascunhos e empreendimentos já entregues sem unidades ficaram de fora. "Apartamentos" = unidades cadastradas nesses empreendimentos, contadas no ano de publicação do projeto. Em parte dos casos, a data de publicação é aproximada pela data de cadastro. A coluna de 2026 cobre janeiro a junho. Levantamento direto do banco de dados DWV em 06/08/2026.</div>
+  </div>
+</section>
+
+<!-- SÃO PAULO -->
+<section id="saopaulo">
+  <div class="container">
+    <div class="section-eyebrow">São Paulo</div>
+    <h2 class="section-title">O recorte de alto padrão da capital paulista</h2>
+    <p class="section-sub">Em São Paulo, a base da DWV cobre um conjunto específico de lançamentos, concentrado em bairros de alto padrão — não o mercado inteiro da cidade. Os números abaixo devem ser lidos com esse recorte em mente.</p>
+
+    <div class="about-grid" style="margin-top:0;">
+      <div class="about-stat">
+        <div class="as-val">5.681</div>
+        <div class="as-label">imóveis novos monitorados no 1º sem. 2026</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-val">R$ 7,9 bi</div>
+        <div class="as-label">em imóveis à venda nesse recorte</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-val">R$ 18.518</div>
+        <div class="as-label">preço médio do m² de oferta</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-val">2024</div>
+        <div class="as-label">ano em que a base de SP começou (2023 sem registros)</div>
+      </div>
+    </div>
+
+    <div class="chart-card table-scroll" style="padding:28px 24px;">
+      <div class="chart-card-title">Os bairros mais caros do recorte — pelo preço de oferta</div>
+      <div class="chart-card-sub">Como há poucas vendas registradas na base de SP (48 no semestre), o ranking usa o preço pedido pelos imóveis à venda — não o preço pago. Ao lado, quantos imóveis sustentam cada média. Como o nome do bairro é digitado pela construtora, cadastros com grafias diferentes do mesmo lugar foram somados (caso de Moema e da região dos Jardins).</div>
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>Bairro</th>
+            <th>m² de Oferta<br>1º sem. 2026</th>
+            <th>Imóveis<br>à Venda</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rank top1">1</span><span class="bname">Vila Olímpia</span></td>
+            <td style="font-weight:800;">R$ 60.222</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <td><span class="rank top2">2</span><span class="bname">Itaim Bibi</span></td>
+            <td style="font-weight:700;">R$ 38.790</td>
+            <td>108</td>
+          </tr>
+          <tr>
+            <td><span class="rank top3">3</span><span class="bname">Região dos Jardins</span><span class="bsub">Soma dos cadastros "Jardins", Jardim Europa, Jardim Paulista e Jardim Paulistano</span></td>
+            <td style="font-weight:700;">R$ 37.702</td>
+            <td>84</td>
+          </tr>
+          <tr>
+            <td><span class="rank">4</span><span class="bname">Alto de Pinheiros</span></td>
+            <td>R$ 27.471</td>
+            <td>33</td>
+          </tr>
+          <tr>
+            <td><span class="rank">5</span><span class="bname">Vila Nova Conceição</span></td>
+            <td>R$ 26.139</td>
+            <td>180</td>
+          </tr>
+          <tr>
+            <td><span class="rank">6</span><span class="bname">Moema</span></td>
+            <td>R$ 25.865</td>
+            <td>236</td>
+          </tr>
+          <tr>
+            <td><span class="rank">7</span><span class="bname">Pinheiros</span></td>
+            <td>R$ 21.571</td>
+            <td>511</td>
+          </tr>
+          <tr>
+            <td><span class="rank">8</span><span class="bname">Higienópolis</span></td>
+            <td>R$ 21.564</td>
+            <td>333</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose" style="margin-top:24px;">Um dado que ajuda a dimensionar o litoral catarinense: no topo do recorte paulistano, os preços pedidos chegam à faixa de <strong>R$ 60 mil/m²</strong> (Vila Olímpia) — enquanto o Centro de Balneário Camboriú opera com oferta média de <strong>R$ 28.978/m²</strong> e vendas efetivas a R$ 26.775/m². São mercados de naturezas diferentes, mas os dados mostram os bairros mais valorizados de BC em patamar comparável ao de bairros nobres consolidados de São Paulo, como Alto de Pinheiros e Vila Nova Conceição.</p>
+
+    <div class="data-note">⚠ <strong>Ressalva obrigatória ao citar São Paulo:</strong> os números refletem apenas os lançamentos cadastrados na plataforma DWV na capital — um recorte de alto padrão — e usam preço de oferta (pedido), não de venda. Não representam o mercado imobiliário total de São Paulo.</div>
+  </div>
+</section>
+
+<!-- NOTAS -->
+<section class="alt" id="notas">
+  <div class="container">
+    <div class="section-eyebrow">Notas</div>
+    <h2 class="section-title">Para usar esses números corretamente</h2>
+    <p class="section-sub">Cinco cuidados de leitura — importantes para citar os dados com precisão.</p>
+
+    <div class="two-col" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div class="chart-card" style="margin-top:0;">
+        <div class="chart-card-title">1 · Só imóveis novos</div>
+        <div style="font-size:13px; color:var(--gray-600); line-height:1.7; margin-top:8px;">
+          Os dados cobrem apenas <strong style="color:var(--black);">imóveis novos e lançamentos</strong> — vendidos na planta, em obras ou recém-entregues, direto das construtoras. Imóveis usados (o chamado mercado secundário) não entram.
+        </div>
+      </div>
+      <div class="chart-card" style="margin-top:0;">
+        <div class="chart-card-title">2 · "Vendido" e distratos</div>
+        <div style="font-size:13px; color:var(--gray-600); line-height:1.7; margin-top:8px;">
+          Um imóvel conta como vendido quando a construtora o <strong style="color:var(--black);">retira da lista de disponíveis</strong>. Vendas desfeitas (distratos) são descontadas automaticamente — ou seja, os números deste material são as <strong style="color:var(--black);">vendas líquidas</strong>, o que os torna mais fiéis à realidade. É também por isso que consultas feitas em datas diferentes podem apresentar variações.
+        </div>
+      </div>
+      <div class="chart-card" style="margin-top:0;">
+        <div class="chart-card-title">3 · Cobertura por cidade</div>
+        <div style="font-size:13px; color:var(--gray-600); line-height:1.7; margin-top:8px;">
+          Em <strong style="color:var(--black);">Porto Belo, Itapema, Itajaí, Balneário Camboriú e Navegantes</strong>, a grande maioria das construtoras usa a DWV — os números retratam bem o mercado. Nas cidades menores a cobertura é parcial, e em <strong style="color:var(--black);">São Paulo</strong> é um recorte de alto padrão.
+        </div>
+      </div>
+      <div class="chart-card" style="margin-top:0;">
+        <div class="chart-card-title">4 · Uma única fotografia</div>
+        <div style="font-size:13px; color:var(--gray-600); line-height:1.7; margin-top:8px;">
+          Todos os números de cidades e bairros vêm de <strong style="color:var(--black);">uma única extração da base, em 09/09/2026</strong>, cobrindo 2023, 2024, 2025 e o 1º semestre de 2026 (janeiro a junho). A tabela de empreendimentos lançados vem de um levantamento próprio, de 06/08/2026.
+        </div>
+      </div>
+      <div class="chart-card" style="margin-top:0;">
+        <div class="chart-card-title">5 · Média reflete o que vendeu</div>
+        <div style="font-size:13px; color:var(--gray-600); line-height:1.7; margin-top:8px;">
+          O m² vendido é a média do que <strong style="color:var(--black);">foi comprado</strong> em cada período. Se uma cidade ou bairro passa a vender imóveis maiores ou de padrão mais alto, a média sobe também. Em bairros com poucas vendas, a média oscila — por isso o número de vendas acompanha cada dado.
+        </div>
+      </div>
+      <div class="chart-card" style="margin-top:0; background:var(--black); border-color:transparent;">
+        <div class="chart-card-title" style="color:white;">Dúvidas sobre os dados?</div>
+        <div style="font-size:13px; color:var(--gray-400); line-height:1.7; margin-top:8px;">
+          A equipe da DWV pode detalhar qualquer recorte deste material — outros períodos, outras cidades ou aberturas específicas.<br><strong style="color:var(--gray-200);">marketing@dwvapp.com.br</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-note">ⓘ Fonte: plataforma DWV · Inteligência de Mercado · Material preparado para imprensa · 2023 – 1º semestre de 2026</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="brand-mark">D</div>
+      <span>DWV Inteligência de Mercado</span>
+    </div>
+    <div class="footer-info">
+      Material preparado para imprensa · <strong>Contato: marketing@dwvapp.com.br</strong> · Dados: plataforma DWV · 2023 – 1º sem. 2026
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
